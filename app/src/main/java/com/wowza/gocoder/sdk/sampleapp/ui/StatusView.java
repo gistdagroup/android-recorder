@@ -36,6 +36,7 @@ import com.wowza.gocoder.sdk.api.errors.WZError;
 import com.wowza.gocoder.sdk.api.status.WZState;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.sampleapp.R;
+import com.wowza.gocoder.sdk.sampleapp.RecordListener;
 
 public class StatusView extends RelativeLayout {
     final private static String TAG = StatusView.class.getSimpleName();
@@ -48,6 +49,12 @@ public class StatusView extends RelativeLayout {
     private volatile boolean isPaused;
     private volatile boolean isShowing;
     private volatile boolean isHiding;
+
+    private RecordListener mRecordListener;
+
+    public void setRecordListener(RecordListener listener) {
+        this.mRecordListener = listener;
+    }
 
     public StatusView(Context context) {
         super(context);
@@ -169,12 +176,20 @@ public class StatusView extends RelativeLayout {
 
                 case WZState.READY:
                     mStatusMessage = getResources().getString(R.string.status_connected);
-                    //TODO
+
+                    if (mRecordListener != null) {
+                        mRecordListener.connected();
+                    }
+
                     break;
 
                 case WZState.STOPPING:
                     mStatusMessage = getResources().getString(R.string.status_disconnecting);
-                    //TODO
+
+                    if (mRecordListener != null) {
+                        mRecordListener.disconnected();
+                    }
+
                     break;
             }
             updateView();

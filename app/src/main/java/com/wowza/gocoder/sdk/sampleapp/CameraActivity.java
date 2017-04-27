@@ -25,12 +25,25 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.wowza.gocoder.sdk.api.devices.WZCamera;
+import com.wowza.gocoder.sdk.sampleapp.http.ApiAdapter;
+import com.wowza.gocoder.sdk.sampleapp.http.StreamingGateway;
 import com.wowza.gocoder.sdk.sampleapp.ui.AutoFocusListener;
 import com.wowza.gocoder.sdk.sampleapp.ui.MultiStateButton;
+import com.wowza.gocoder.sdk.sampleapp.ui.Payload;
 import com.wowza.gocoder.sdk.sampleapp.ui.TimerView;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CameraActivity extends CameraActivityBase
-        implements UpdateTimerListener, UpdateGPSListener {
+        implements UpdateTimerListener, UpdateGPSListener, RecordListener {
     private final static String TAG = CameraActivity.class.getSimpleName();
 
     // UI controls
@@ -43,6 +56,8 @@ public class CameraActivity extends CameraActivityBase
 
     private String currentTime = "";
     private GPSLocation mLocation;
+
+    private StreamingGateway mStreamingGateway;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +76,31 @@ public class CameraActivity extends CameraActivityBase
         mTimerView.setUpdateTimerListener(this);
 
         mLocation = new GPSLocation(this);
+        mLocation.setUpdateGPSListener(this);
 
-        Location gpsLocation = mLocation.getLocation(LocationManager.GPS_PROVIDER);
-//        if(null != gpsLocation){
-//            Double latitude = gpsLocation.getLatitude();
-//            Double longitude = gpsLocation.getLongitude();
-//            Log.d("ak", "GPS Location: "+ latitude + " " + longitude);
-//        }
-//        else{
-//            Log.d("ak", "GPS Location: error");
-//        }
+        mLocation.getLocation(LocationManager.GPS_PROVIDER);
+
+//        mStreamingGateway = ApiAdapter.createService(StreamingGateway.class);
+
+    }
+
+    private int sendPacket(String payload) {
+
+        try {
+            DatagramSocket udpSocket = new DatagramSocket(5000);
+            InetAddress serverAddr = InetAddress.getByName("");
+            byte[] buf = payload.getBytes();
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, 3000);
+            udpSocket.send(packet);
+            udpSocket.disconnect();
+            udpSocket.close();
+        } catch (SocketException e) {
+            Log.e(TAG, "Socket Error:", e);
+        } catch (IOException e) {
+            Log.e(TAG, "IO Error:", e);
+        }
+
+        return 0;
     }
 
     /**
@@ -87,6 +117,10 @@ public class CameraActivity extends CameraActivityBase
             WZCamera activeCamera = mWZCameraView.getCamera();
             if (activeCamera != null && activeCamera.hasCapability(WZCamera.FOCUS_MODE_CONTINUOUS))
                 activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
+        }
+
+        if (mStatusView != null) {
+            mStatusView.setRecordListener(this);
         }
 
     }
@@ -181,13 +215,45 @@ public class CameraActivity extends CameraActivityBase
 
     @Override
     public void update(String currentTime) {
-//        Log.d("ak", "update currentTime: "+ currentTime);
+        Log.d(TAG, "update currentTime: "+ currentTime);
         this.currentTime = currentTime;
     }
 
     @Override
     public void updateLocation(String lat, String lng) {
-//        if (!TextUtils.isEmpty(currentTime))
-        Log.d("ak", "time : "+ currentTime + " with location : " + lat + ", " + lng);
+
+        Log.d(TAG, new Payload.Builder(this)
+                .setLat(lat)
+                .setLng(lng)
+                .build());
+
     }
+
+    @Override
+    public void connected() {
+        Log.d(TAG, "connected");
+        Call<Object> call = mStreamingGateway.record("file00.mp4", "startRecording");
+        call.enqueue(callback);
+    }
+
+    @Override
+    public void disconnected() {
+        Log.d(TAG, "disconnected");
+        Call<Object> call = mStreamingGateway.record("file00.mp4", "stopRecording");
+        call.enqueue(callback);
+    }
+
+    Callback<Object> callback = new Callback<Object>() {
+
+        @Override
+        public void onResponse(Call<Object> call, Response<Object> response) {
+            Log.d(TAG, response.message());
+        }
+
+        @Override
+        public void onFailure(Call<Object> call, Throwable t) {
+            t.printStackTrace();
+        }
+    };
+
 }
