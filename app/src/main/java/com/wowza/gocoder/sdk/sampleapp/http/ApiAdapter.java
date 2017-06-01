@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiAdapter {
 
-    private static final String BASE_URL = ":8086";
+    private static final String BASE_URL = "http://gps.gistda.org:8080/api/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
