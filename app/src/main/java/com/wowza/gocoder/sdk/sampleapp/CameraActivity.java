@@ -27,6 +27,9 @@ import android.view.View;
 import com.wowza.gocoder.sdk.api.devices.WZCamera;
 import com.wowza.gocoder.sdk.sampleapp.http.ApiAdapter;
 import com.wowza.gocoder.sdk.sampleapp.http.StreamingGateway;
+import com.wowza.gocoder.sdk.sampleapp.location.IUpdateLocationPresenter;
+import com.wowza.gocoder.sdk.sampleapp.location.LocationModel;
+import com.wowza.gocoder.sdk.sampleapp.location.UpdateLocationPresenter;
 import com.wowza.gocoder.sdk.sampleapp.ui.AutoFocusListener;
 import com.wowza.gocoder.sdk.sampleapp.ui.MultiStateButton;
 import com.wowza.gocoder.sdk.sampleapp.ui.Payload;
@@ -37,6 +40,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.sql.Timestamp;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +63,8 @@ public class CameraActivity extends CameraActivityBase
 
     private StreamingGateway mStreamingGateway;
 
+    private IUpdateLocationPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +85,8 @@ public class CameraActivity extends CameraActivityBase
         mLocation.setUpdateGPSListener(this);
 
         mLocation.getLocation(LocationManager.GPS_PROVIDER);
+
+        presenter = new UpdateLocationPresenter();
 
 //        mStreamingGateway = ApiAdapter.createService(StreamingGateway.class);
 
@@ -222,10 +230,12 @@ public class CameraActivity extends CameraActivityBase
     @Override
     public void updateLocation(String lat, String lng) {
 
-        Log.d(TAG, new Payload.Builder(this)
+        /*Log.d(TAG, new Payload.Builder(this)
                 .setLat(lat)
                 .setLng(lng)
-                .build());
+                .build()); */
+
+        presenter.updateLocation(new LocationModel(this, lat, lng));
 
     }
 
