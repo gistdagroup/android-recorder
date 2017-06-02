@@ -16,7 +16,6 @@
 package com.wowza.gocoder.sdk.sampleapp;
 
 import android.Manifest;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
@@ -25,14 +24,15 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.wowza.gocoder.sdk.api.devices.WZCamera;
-import com.wowza.gocoder.sdk.sampleapp.http.ApiAdapter;
 import com.wowza.gocoder.sdk.sampleapp.http.StreamingGateway;
 import com.wowza.gocoder.sdk.sampleapp.location.IUpdateLocationPresenter;
 import com.wowza.gocoder.sdk.sampleapp.location.LocationModel;
 import com.wowza.gocoder.sdk.sampleapp.location.UpdateLocationPresenter;
+import com.wowza.gocoder.sdk.sampleapp.record.presenter.IVideoRecordPresenter;
+import com.wowza.gocoder.sdk.sampleapp.record.viewmodel.IVideoRecordView;
+import com.wowza.gocoder.sdk.sampleapp.record.presenter.VideoRecordPresenter;
 import com.wowza.gocoder.sdk.sampleapp.ui.AutoFocusListener;
 import com.wowza.gocoder.sdk.sampleapp.ui.MultiStateButton;
-import com.wowza.gocoder.sdk.sampleapp.ui.Payload;
 import com.wowza.gocoder.sdk.sampleapp.ui.TimerView;
 
 import java.io.IOException;
@@ -40,14 +40,15 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.sql.Timestamp;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends CameraActivityBase
-        implements UpdateTimerListener, UpdateGPSListener, RecordListener {
+        implements UpdateTimerListener, UpdateGPSListener, RecordListener, IVideoRecordView {
+
+
     private final static String TAG = CameraActivity.class.getSimpleName();
 
     // UI controls
@@ -64,6 +65,9 @@ public class CameraActivity extends CameraActivityBase
     private StreamingGateway mStreamingGateway;
 
     private IUpdateLocationPresenter presenter;
+    private IVideoRecordPresenter videoRecordPresenter;
+
+    private String referenceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +91,8 @@ public class CameraActivity extends CameraActivityBase
         mLocation.getLocation(LocationManager.GPS_PROVIDER);
 
         presenter = new UpdateLocationPresenter();
+
+        videoRecordPresenter = new VideoRecordPresenter(this);
 
 //        mStreamingGateway = ApiAdapter.createService(StreamingGateway.class);
 
@@ -244,6 +250,8 @@ public class CameraActivity extends CameraActivityBase
         Log.d(TAG, "connected");
         Call<Object> call = mStreamingGateway.record("file00.mp4", "startRecording");
         call.enqueue(callback);
+
+        videoRecordPresenter.startRecord(Utility.getUUID(this));
     }
 
     @Override
@@ -251,6 +259,8 @@ public class CameraActivity extends CameraActivityBase
         Log.d(TAG, "disconnected");
         Call<Object> call = mStreamingGateway.record("file00.mp4", "stopRecording");
         call.enqueue(callback);
+
+        videoRecordPresenter.stopRecord(Utility.getUUID(this), this.referenceId);
     }
 
     Callback<Object> callback = new Callback<Object>() {
@@ -266,4 +276,10 @@ public class CameraActivity extends CameraActivityBase
         }
     };
 
+    @Override
+    public void recordStarted(String referenceId) {
+
+        this.referenceId = referenceId;
+
+    }
 }
