@@ -1,4 +1,4 @@
-package com.wowza.gocoder.sdk.sampleapp.http;
+package com.wowza.gocoder.sdk.sampleapp;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -18,12 +18,22 @@ public class ApiAdapter {
     private static OkHttpClient.Builder httpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createService(
-            Class<S> serviceClass) {
+    public static <S> S createService(Class<S> serviceClass) {
 
         builder.client(httpClient.build());
         retrofit = builder.build();
         return retrofit.create(serviceClass);
+
+    }
+
+    public static <S> S createService(Class<S> serviceClass, String newApiBaseUrl) {
+
+        builder = new Retrofit.Builder()
+                .baseUrl(newApiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        return createService(serviceClass);
+
     }
 
 }

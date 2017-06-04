@@ -3,7 +3,7 @@ package com.wowza.gocoder.sdk.sampleapp.record.repository;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.wowza.gocoder.sdk.sampleapp.http.ApiAdapter;
+import com.wowza.gocoder.sdk.sampleapp.ApiAdapter;
 import com.wowza.gocoder.sdk.sampleapp.record.viewmodel.VideoRecordModel;
 
 import okhttp3.MediaType;
