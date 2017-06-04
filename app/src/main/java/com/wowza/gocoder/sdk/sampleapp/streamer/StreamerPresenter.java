@@ -4,7 +4,7 @@ public class StreamerPresenter implements IStreamerPresenter {
 
     private StreamerRepository repository;
 
-    private static final String DEFAULT_FILENAME = "default.mp4";
+    private static final String DEFAULT_FILENAME = "default";
     private String filename;
 
     public StreamerPresenter() {

@@ -41,6 +41,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CameraActivity extends CameraActivityBase
         implements UpdateTimerListener, UpdateGPSListener, RecordListener, IVideoRecordView {
@@ -64,6 +66,7 @@ public class CameraActivity extends CameraActivityBase
     private IVideoRecordPresenter videoRecordPresenter;
 
     private String referenceId;
+    private String filename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,7 +243,7 @@ public class CameraActivity extends CameraActivityBase
     public void connected() {
         Log.d(TAG, "connected");
 
-        streamerPresenter.start("xxxx.mp4");
+        streamerPresenter.start(generateFileName());
 
         videoRecordPresenter.startRecord(Utility.getUUID(this));
     }
@@ -251,13 +254,25 @@ public class CameraActivity extends CameraActivityBase
 
         streamerPresenter.stop();
 
-        videoRecordPresenter.stopRecord(Utility.getUUID(this), this.referenceId);
+        videoRecordPresenter.stopRecord(Utility.getUUID(this), this.referenceId, this.filename);
     }
 
     @Override
     public void recordStarted(String referenceId) {
 
         this.referenceId = referenceId;
+
+    }
+
+    private String generateFileName() {
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+            Date data = new Date(System.currentTimeMillis());
+            return this.filename = "source1-" + sdf.format(data);
+        }catch (Exception ex) {
+            return this.filename = "";
+        }
 
     }
 }

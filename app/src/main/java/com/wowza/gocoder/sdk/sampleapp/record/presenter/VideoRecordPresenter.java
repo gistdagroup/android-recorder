@@ -18,7 +18,7 @@ public class VideoRecordPresenter implements IVideoRecordPresenter, IVideoReposi
     @Override
     public void startRecord(String uuid) {
 
-        repository.startRecord(new VideoRecordModel(false, uuid, ""));
+        repository.startRecord(new VideoRecordModel(false, uuid, "myStream"));
 
     }
 
@@ -30,9 +30,9 @@ public class VideoRecordPresenter implements IVideoRecordPresenter, IVideoReposi
     }
 
     @Override
-    public void stopRecord(String uuid, String referenceId) {
+    public void stopRecord(String uuid, String referenceId, String filename) {
 
-        repository.stopRecord(new VideoRecordModel(true, uuid, "done", referenceId));
+        repository.stopRecord(new VideoRecordModel(true, uuid, filename + ".mp4", referenceId));
 
     }
 
