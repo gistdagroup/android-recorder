@@ -14,13 +14,12 @@ public class StreamerRepository {
     private StreamerService streamerService;
 
     public StreamerRepository() {
-        this.streamerService = ApiAdapter.createService(StreamerService.class,
-                "http://gps.gistda.org:8086/");
+        this.streamerService = ApiAdapter.createService(StreamerService.class, ApiAdapter.HOST + ":8086/");
     }
 
-    public void start(String filename) {
+    public void start(String filename, String streamName) {
 
-        streamerService.record(STREAMER_ACTION_START, filename).enqueue(new Callback<String>() {
+        streamerService.record(STREAMER_ACTION_START, filename, streamName).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
@@ -34,9 +33,9 @@ public class StreamerRepository {
 
     }
 
-    public void stop(String filename) {
+    public void stop(String filename, String streamName) {
 
-        streamerService.record(STREAMER_ACTION_STOP, filename).enqueue(new Callback<String>() {
+        streamerService.record(STREAMER_ACTION_STOP, filename, streamName).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 

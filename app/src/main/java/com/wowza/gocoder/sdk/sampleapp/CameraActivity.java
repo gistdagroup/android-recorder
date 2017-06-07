@@ -16,8 +16,10 @@
 package com.wowza.gocoder.sdk.sampleapp;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -72,6 +74,12 @@ public class CameraActivity extends CameraActivityBase
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("wz_live_host_address", ApiAdapter.HOST_NAME);
+        editor.putString("wz_live_stream_name", Utility.getUUID(this));
+        editor.apply();
 
         mRequiredPermissions = new String[] {
                 Manifest.permission.CAMERA,
@@ -243,7 +251,7 @@ public class CameraActivity extends CameraActivityBase
     public void connected() {
         Log.d(TAG, "connected");
 
-        streamerPresenter.start(generateFileName());
+        streamerPresenter.start(generateFileName(), Utility.getUUID(this));
 
         videoRecordPresenter.startRecord(Utility.getUUID(this));
     }

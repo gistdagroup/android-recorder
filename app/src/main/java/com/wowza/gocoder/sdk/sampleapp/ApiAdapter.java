@@ -9,7 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiAdapter {
 
-    private static final String BASE_URL = "http://gps.gistda.org:8080/api/";
+    public static final String HOST_NAME = "gps.gistda.org";
+
+    public static final String HOST = "http://" + HOST_NAME;
+
+    private static final String BASE_URL = HOST + ":8080/api/";
 
     private static Gson gson = new GsonBuilder()
             .setLenient()

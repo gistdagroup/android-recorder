@@ -18,7 +18,7 @@ public class VideoRecordPresenter implements IVideoRecordPresenter, IVideoReposi
     @Override
     public void startRecord(String uuid) {
 
-        repository.startRecord(new VideoRecordModel(false, uuid, "myStream"));
+        repository.startRecord(new VideoRecordModel(false, uuid, uuid));
 
     }
 
