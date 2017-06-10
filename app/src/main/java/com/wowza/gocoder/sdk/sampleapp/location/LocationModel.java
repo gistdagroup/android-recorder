@@ -4,7 +4,12 @@ import android.content.Context;
 
 import com.wowza.gocoder.sdk.sampleapp.Utility;
 
+import java.sql.DatabaseMetaData;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class LocationModel {
 
@@ -29,7 +34,7 @@ public class LocationModel {
 
         this.type = "ANDROID";
         this.hdop = "0";
-        this.date = new Timestamp(System.currentTimeMillis()).toString();
+        this.date = Utility.getDateTimeUTC(new Date());
         this.coord = new Coord(lat, lng);
         this.uuid = Utility.getUUID(context);
 

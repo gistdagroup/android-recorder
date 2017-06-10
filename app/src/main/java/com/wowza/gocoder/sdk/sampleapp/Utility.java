@@ -8,6 +8,10 @@ import android.text.TextUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Utility {
 
@@ -45,6 +49,19 @@ public class Utility {
             sb.append(String.format("%02X", b));
         }
         return sb;
+    }
+
+
+    public static String getDateTimeUTC(Date date) {
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return sdf.format(date);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return "";
+        }
     }
 
 }
