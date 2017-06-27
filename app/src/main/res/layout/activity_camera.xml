@@ -93,6 +93,7 @@
             android:onClick="onSettings"
             android:background="#000000ff"
             android:padding="10dp"
+            android:visibility="invisible"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true" />
 
