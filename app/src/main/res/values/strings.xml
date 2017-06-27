@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name_short">GoCoder SDK</string>
+    <string name="app_name_short">Gistda</string>
     <string name="app_name_long">Wowza GoCoder SDK Examples</string>
 
     <string name="camera_example_title">GoCoder SDK Capture Example</string>
