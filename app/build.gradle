@@ -44,10 +44,14 @@ dependencies {
 
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.okhttp:okhttp:2.7.2'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
 
     compile(name:'com.wowza.gocoder.sdk', ext:'aar')
 
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
+    testCompile 'com.squareup.retrofit2:retrofit-mock:2.2.0'
+    testCompile 'com.squareup.okhttp3:mockwebserver:3.8.1'
 
 }
