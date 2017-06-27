@@ -10,16 +10,16 @@ import org.junit.Test;
 
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 
 public class LocationRepositoryTest {
 
@@ -43,7 +43,7 @@ public class LocationRepositoryTest {
     }
 
     @Test
-    public void testLocationRepositoryCallLocationServiceOnceTimes() throws Exception {
+    public void testCallLocationServiceOnceTimes() throws Exception {
 
         BehaviorDelegate<LocationService> delegate = mockRetrofit.create(LocationService.class);
 
@@ -58,6 +58,21 @@ public class LocationRepositoryTest {
 
     }
 
+    @Test
+    public void testShouldHaveResponse() throws Exception {
+
+        BehaviorDelegate<LocationService> delegate = mockRetrofit.create(LocationService.class);
+        MockLocationService service = new MockLocationService(delegate);
+
+        Response<LocationModel> response = service.update(any(RequestBody.class)).execute();
+
+        assertNotNull(response.body().uuid);
+        assertNotNull(response.body().type);
+        assertNotNull(response.body().coord);
+
+
+    }
+
     private void verify_LocationServiceShouldCallOnceTimes(LocationService service) {
         if (((MockLocationService) service).times != 1) {
             fail("update() should call at least once times");
@@ -67,25 +82,6 @@ public class LocationRepositoryTest {
     @After
     public void tearDown() throws Exception {
         mockRetrofit = null;
-    }
-}
-
-class MockLocationService implements LocationService {
-
-    private BehaviorDelegate<LocationService> delegate;
-
-    public int times = 0;
-
-    public MockLocationService(BehaviorDelegate<LocationService> delegate) {
-        this.delegate = delegate;
-    }
-
-    @Override
-    public Call<LocationModel> update(@Body RequestBody body) {
-
-        times++;
-
-        return delegate.returningResponse(mock(LocationModel.class)).update(null);
-
+        retrofit = null;
     }
 }
