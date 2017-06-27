@@ -1,3 +1,5 @@
+package location;
+
 import com.google.gson.Gson;
 import com.wowza.gocoder.sdk.sampleapp.location.LocationModel;
 
