@@ -30,6 +30,8 @@ public class LocationModel {
         }
     }
 
+    public LocationModel() {}
+
     public LocationModel(Context context, String lat, String lng) {
 
         this.type = "ANDROID";

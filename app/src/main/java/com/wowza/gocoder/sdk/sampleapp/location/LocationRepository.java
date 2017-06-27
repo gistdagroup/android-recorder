@@ -15,6 +15,10 @@ public class LocationRepository {
 
     private LocationService locationService;
 
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
+    }
+
     public LocationRepository() {
         this.locationService = ApiAdapter.createService(LocationService.class);
     }
