@@ -17,6 +17,8 @@ public class GPSLocation implements LocationListener {
     protected LocationManager locationManager;
     Activity appContext = null;
 
+    public static final int REQUEST_PERMISSION_CODE = 110;
+
     public static  String getUtmText() {
         return utmText;
     }
@@ -45,7 +47,7 @@ public class GPSLocation implements LocationListener {
                 ActivityCompat.requestPermissions(appContext
                         , new String[]{Manifest.permission.ACCESS_FINE_LOCATION
                                 , Manifest.permission.ACCESS_COARSE_LOCATION}
-                        , 1);
+                        , REQUEST_PERMISSION_CODE);
                 return null;
 
             }

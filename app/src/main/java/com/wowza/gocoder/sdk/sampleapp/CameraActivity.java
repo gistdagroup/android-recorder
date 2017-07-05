@@ -95,7 +95,7 @@ public class CameraActivity extends CameraActivityBase
         mLocation = new GPSLocation(this);
         mLocation.setUpdateGPSListener(this);
 
-        mLocation.getLocation(LocationManager.GPS_PROVIDER);
+        requestGPSLocation();
 
         presenter = new UpdateLocationPresenter();
 
@@ -105,23 +105,26 @@ public class CameraActivity extends CameraActivityBase
 
     }
 
-    private int sendPacket(String payload) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-        try {
-            DatagramSocket udpSocket = new DatagramSocket(5000);
-            InetAddress serverAddr = InetAddress.getByName("");
-            byte[] buf = payload.getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, 3000);
-            udpSocket.send(packet);
-            udpSocket.disconnect();
-            udpSocket.close();
-        } catch (SocketException e) {
-            Log.e(TAG, "Socket Error:", e);
-        } catch (IOException e) {
-            Log.e(TAG, "IO Error:", e);
+        switch (requestCode) {
+
+            case GPSLocation.REQUEST_PERMISSION_CODE : {
+
+                requestGPSLocation();
+
+                break;
+            }
+
         }
 
-        return 0;
+    }
+
+    private void requestGPSLocation() {
+
+        mLocation.getLocation(LocationManager.GPS_PROVIDER);
+
     }
 
     /**
