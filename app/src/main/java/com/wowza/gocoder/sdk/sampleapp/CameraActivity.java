@@ -38,11 +38,6 @@ import com.wowza.gocoder.sdk.sampleapp.ui.AutoFocusListener;
 import com.wowza.gocoder.sdk.sampleapp.ui.MultiStateButton;
 import com.wowza.gocoder.sdk.sampleapp.ui.TimerView;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -111,8 +106,6 @@ public class CameraActivity extends CameraActivityBase
         switch (requestCode) {
 
             case GPSLocation.REQUEST_PERMISSION_CODE : {
-
-                requestGPSLocation();
 
                 break;
             }
@@ -224,10 +217,14 @@ public class CameraActivity extends CameraActivityBase
             }
 
             if (isStreaming && !mTimerView.isRunning()) {
+
                 mLocation.setUpdateGPSListener(this);
+
                 mTimerView.startTimer();
             } else if (getBroadcast().getStatus().isIdle() && mTimerView.isRunning()) {
+
                 mLocation.setUpdateGPSListener(null);
+
                 mTimerView.stopTimer();
             } else if (!isStreaming) {
                 mTimerView.setVisibility(View.GONE);
@@ -253,6 +250,8 @@ public class CameraActivity extends CameraActivityBase
     @Override
     public void connected() {
         Log.d(TAG, "connected");
+
+        requestGPSLocation();
 
         streamerPresenter.start(generateFileName(), Utility.getUUID(this));
 
