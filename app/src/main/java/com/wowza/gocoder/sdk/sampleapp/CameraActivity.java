@@ -64,6 +64,7 @@ public class CameraActivity extends CameraActivityBase
 
     private String referenceId;
     private String filename;
+    private boolean isRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +146,9 @@ public class CameraActivity extends CameraActivityBase
     @Override
     protected void onPause() {
         super.onPause();
+
+        if (isRecording && streamerPresenter != null && videoRecordPresenter != null)
+            stopRecord();
     }
 
     /**
@@ -253,18 +257,16 @@ public class CameraActivity extends CameraActivityBase
 
         requestGPSLocation();
 
-        streamerPresenter.start(generateFileName(), Utility.getUUID(this));
+        startRecord();
 
-        videoRecordPresenter.startRecord(Utility.getUUID(this));
     }
 
     @Override
     public void disconnected() {
         Log.d(TAG, "disconnected");
 
-        streamerPresenter.stop();
+        stopRecord();
 
-        videoRecordPresenter.stopRecord(Utility.getUUID(this), this.referenceId, this.filename);
     }
 
     @Override
@@ -273,6 +275,19 @@ public class CameraActivity extends CameraActivityBase
         this.referenceId = referenceId;
 
     }
+
+    private void startRecord() {
+        isRecording = true;
+        streamerPresenter.start(generateFileName(), Utility.getUUID(this));
+        videoRecordPresenter.startRecord(Utility.getUUID(this));
+    }
+
+    private void stopRecord() {
+        isRecording = false;
+        streamerPresenter.stop();
+        videoRecordPresenter.stopRecord(Utility.getUUID(this), this.referenceId, this.filename);
+    }
+
 
     private String generateFileName() {
 
